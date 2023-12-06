@@ -13,19 +13,19 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"one-stop/internal/config"
-	http2 "one-stop/internal/transport/http"
+	http2 "one-stop/internal/transport/inbound/http"
 )
 
 func main() {
 	log := logrus.New()
 	env, err := config.Get()
 	if err != nil {
-		fmt.Println("could not retrieve environment: ", err)
+		log.Error("Could not retrieve environment", err)
 		panic(err)
 	}
-	
+
 	r := gin.New()
-	http2.Register(r, log)
+	http2.Register(r, env, log)
 	port := fmt.Sprintf(":%d", env.Port)
 
 	h := &http.Server{
@@ -60,5 +60,4 @@ func main() {
 	} else {
 		log.Info("Server shutdown gracefully")
 	}
-
 }
