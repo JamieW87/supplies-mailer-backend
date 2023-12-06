@@ -13,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"one-stop/internal/config"
+	"one-stop/internal/service"
 	http2 "one-stop/internal/transport/inbound/http"
 )
 
@@ -25,7 +26,8 @@ func main() {
 	}
 
 	r := gin.New()
-	http2.Register(r, env, log)
+	svc := service.NewService(env)
+	http2.Register(r, env, log, svc)
 	port := fmt.Sprintf(":%d", env.Port)
 
 	h := &http.Server{
