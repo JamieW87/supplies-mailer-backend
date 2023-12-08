@@ -11,22 +11,45 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/bun/migrate"
 
 	"one-stop/internal/config"
 	"one-stop/internal/service"
+	"one-stop/internal/store/postgres"
 	http2 "one-stop/internal/transport/inbound/http"
+	"one-stop/migrations"
 )
 
 func main() {
+	ctx := context.Background()
 	log := logrus.New()
+
+	log.Info("Gathering config")
 	env, err := config.Get()
 	if err != nil {
 		log.Error("Could not retrieve environment", err)
 		panic(err)
 	}
 
+	db := postgres.NewPostgresClient(env)
+
+	log.Info("Running migrations")
+	migrator := migrate.NewMigrator(db.Db, migrations.Migrations)
+	if err := migrator.Init(ctx); err != nil {
+		panic(err)
+	}
+	mig, err := migrator.Migrate(ctx)
+	if err != nil {
+		panic(err)
+	}
+	if mig != nil {
+		log.Info(fmt.Sprintf("Migration applied: %s", mig.String()))
+	}
+	
+	svc := service.NewService(env, db)
+
+	log.Info("Running server")
 	r := gin.New()
-	svc := service.NewService(env)
 	http2.Register(r, env, log, svc)
 	port := fmt.Sprintf(":%d", env.Port)
 
