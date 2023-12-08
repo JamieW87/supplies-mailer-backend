@@ -1,6 +1,14 @@
 package postgres
 
-func (pg PostgresStore) InsertUser(name, email, phone string) error {
+import "github.com/google/uuid"
 
-	return nil
+func (pg PostgresStore) InsertUser(name, email, phone string) (*uuid.UUID, error) {
+
+	//SELECT user_id FROM users WHERE email = 'user_email@example.com';
+
+	//If not exists
+
+	//Insert into users table, get id
+
+	return nil, nil
 }

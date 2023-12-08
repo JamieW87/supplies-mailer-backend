@@ -1,5 +1,5 @@
 package postgres
 
-func (pg PostgresStore) GetSupplierEmails() {
+func (pg PostgresStore) GetSupplierEmailsForCategory() {
 
 }

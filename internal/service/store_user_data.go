@@ -1,6 +1,10 @@
 package service
 
+import "fmt"
+
 func (s *Service) StoreUserData() error {
 
-	return s.db.InsertUser("", "", "")
+	userId, err := s.db.InsertUser("", "", "")
+	fmt.Println(userId)
+	return err
 }
