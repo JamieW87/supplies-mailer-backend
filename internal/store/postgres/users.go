@@ -12,3 +12,11 @@ func (pg PostgresStore) InsertUser(name, email, phone string) (*uuid.UUID, error
 
 	return nil, nil
 }
+
+func (pg PostgresStore) InsertUserCategory(user uuid.UUID, category string) {
+
+	// SELECT id from categories where name = category
+
+	//Insert into user_categories (userId categoryId)
+
+}
