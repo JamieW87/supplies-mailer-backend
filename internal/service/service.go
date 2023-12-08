@@ -13,5 +13,6 @@ type Service struct {
 func NewService(env *config.Environment, db *postgres.PostgresStore) *Service {
 	return &Service{
 		env: env,
-		db:  db}
+		db:  db,
+	}
 }
