@@ -8,6 +8,10 @@
 *.so
 *.dylib
 
+/.idea
+.env.local
+one-stop.iml
+
 # Test binary, built with `go test -c`
 *.test
 
