@@ -22,11 +22,11 @@ func (s *Service) StoreUserData(ctx context.Context, name, email, phone string) 
 		UpdatedAt: now,
 	}
 
-	err := s.db.InsertUser(ctx, user)
+	userId, err := s.db.InsertUser(ctx, user)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
-	return user.Id, err
+	return userId, err
 }
 
 func (s *Service) InsertUserCategory(ctx context.Context, userId uuid.UUID, category string) error {

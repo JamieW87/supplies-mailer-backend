@@ -14,6 +14,10 @@ type CreateUserEntryRequest struct {
 	Category string `json:"category" binding:"required"`
 }
 
+type CreateUserEntryResponse struct {
+	UserId string `json:"user-id"`
+}
+
 type User struct {
 	Id        uuid.UUID `bun:",pk"`
 	Name      string
@@ -26,12 +30,12 @@ type User struct {
 type UserCategory struct {
 	bun.BaseModel `bun:"table:user_categories"`
 	UserId        uuid.UUID
-	CategoryId    uuid.UUID
+	CategoryId    int
 }
 
 type Category struct {
 	bun.BaseModel `bun:"table:categories"`
-	Id            uuid.UUID `bun:",pk"`
+	Id            int `bun:",pk"`
 	Name          string
 	Notes         string
 	CreatedAt     time.Time

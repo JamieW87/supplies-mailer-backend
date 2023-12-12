@@ -1,7 +1,6 @@
 package http_in
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +20,7 @@ type userController struct {
 
 func (uc userController) CreateUserEntry(c *gin.Context) {
 
+	uc.log.Info("Create user request received")
 	var req model.CreateUserEntryRequest
 	err := c.BindJSON(&req)
 	if err != nil {
@@ -28,18 +28,19 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 		return
 	}
 
+	uc.log.Info("Storing user data")
 	u, err := uc.svc.StoreUserData(c, req.Name, req.Email, req.Phone)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
 	}
 
+	uc.log.Info("Storing category information")
 	err = uc.svc.InsertUserCategory(c, u, req.Category)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
 	}
 
-	fmt.Println("ayyeeeee")
-
+	c.IndentedJSON(http.StatusOK, &model.CreateUserEntryResponse{UserId: u.String()})
 }

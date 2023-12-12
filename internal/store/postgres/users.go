@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -9,23 +10,28 @@ import (
 	"one-stop/internal/model"
 )
 
-func (pg PostgresStore) InsertUser(ctx context.Context, user *model.User) error {
+func (pg PostgresStore) InsertUser(ctx context.Context, user *model.User) (uuid.UUID, error) {
 
-	//SELECT user_id FROM users WHERE email = 'user_email@example.com';
-
-	//If not exists ==
-	_, err := pg.Db.NewInsert().Model(user).Exec(ctx)
+	var selectUser model.User
+	err := pg.Db.NewSelect().Model(&selectUser).Where("email = ?", user.Email).Scan(ctx)
 	if err != nil {
-		return fmt.Errorf("error inserting user: %w", err)
+		switch err {
+		case sql.ErrNoRows:
+			_, err = pg.Db.NewInsert().Model(user).Exec(ctx)
+			if err != nil {
+				return uuid.Nil, fmt.Errorf("error inserting user: %w", err)
+			}
+			return user.Id, nil
+		default:
+			return uuid.Nil, fmt.Errorf("error retrieving user: %w", err)
+		}
 	}
-
-	return nil
+	return selectUser.Id, nil
 }
 
 func (pg PostgresStore) InsertUserCategory(ctx context.Context, userId uuid.UUID, category string) error {
 
 	var cat model.Category
-
 	err := pg.Db.NewSelect().Model(&cat).Where("name = ?", category).Scan(ctx)
 	if err != nil {
 		return fmt.Errorf("error retrieving user category: %w", err)

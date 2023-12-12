@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS supplier_categories (
     "supplier_id" uuid,
-    "category_id" uuid,
+    "category_id" integer,
     PRIMARY KEY (supplier_id, category_id),
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
     FOREIGN KEY (category_id) REFERENCES categories(id),
