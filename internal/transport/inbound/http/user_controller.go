@@ -29,22 +29,15 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Storing user data")
-	u, err := uc.svc.StoreUserData(c, req.Name, req.Email, req.Phone)
+	u, err := uc.svc.StoreUserData(c, req.Name, req.Email, req.Phone, req.Category)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
 	}
 
-	uc.log.Info("Storing category information")
-	err = uc.svc.InsertUserCategory(c, u, req.Category)
-	if err != nil {
-		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
-		return
-	}
+	uc.log.Info("Getting supplier information")
 
-	//Get all suppliers for category
+	uc.log.Info("Sending email to suppliers")
 	
-	//Send email to array of suppliers
-
 	c.IndentedJSON(http.StatusOK, &model.CreateUserEntryResponse{UserId: u.String()})
 }

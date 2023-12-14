@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,7 +10,7 @@ import (
 	"one-stop/internal/model"
 )
 
-func (s *Service) StoreUserData(ctx context.Context, name, email, phone string) (uuid.UUID, error) {
+func (s *Service) StoreUserData(ctx context.Context, name, email, phone, category string) (uuid.UUID, error) {
 
 	now := time.Now()
 
@@ -24,12 +25,12 @@ func (s *Service) StoreUserData(ctx context.Context, name, email, phone string) 
 
 	userId, err := s.db.InsertUser(ctx, user)
 	if err != nil {
-		return uuid.UUID{}, err
+		return uuid.UUID{}, fmt.Errorf("error inserting user: %w", err)
+	}
+
+	err = s.db.InsertUserCategory(ctx, userId, category)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("error inserting user category: %w", err)
 	}
 	return userId, err
-}
-
-func (s *Service) InsertUserCategory(ctx context.Context, userId uuid.UUID, category string) error {
-
-	return s.db.InsertUserCategory(ctx, userId, category)
 }
