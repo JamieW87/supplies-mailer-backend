@@ -8,6 +8,7 @@ type Environment struct {
 	PostgresUser     string `required:"true" split_words:"true"`
 	PostgresPassword string `required:"true" split_words:"true"`
 	PostgresDatabase string `required:"true" split_words:"true"`
+	SesSenderAddress string `required:"true" split_words:"true"`
 }
 
 // Get returns the current environment.
