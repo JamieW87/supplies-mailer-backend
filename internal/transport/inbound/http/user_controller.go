@@ -42,5 +42,9 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 		return
 	}
 
+	//Get all suppliers for category
+	
+	//Send email to array of suppliers
+
 	c.IndentedJSON(http.StatusOK, &model.CreateUserEntryResponse{UserId: u.String()})
 }
