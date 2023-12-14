@@ -17,6 +17,7 @@ import (
 	"one-stop/internal/service"
 	"one-stop/internal/store/postgres"
 	http2 "one-stop/internal/transport/inbound/http"
+	http_out "one-stop/internal/transport/outbound/http"
 	"one-stop/migrations"
 )
 
@@ -45,8 +46,13 @@ func main() {
 	if mig != nil {
 		log.Info(fmt.Sprintf("Migration applied: %s", mig.String()))
 	}
-	
-	svc := service.NewService(env, db)
+	awsClient, err := http_out.NewAwsClient(env)
+	if err != nil {
+		log.Error("error creating aws client")
+		panic(err)
+	}
+
+	svc := service.NewService(env, db, awsClient)
 
 	log.Info("Running server")
 	r := gin.New()

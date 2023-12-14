@@ -11,11 +11,11 @@ import (
 )
 
 type AWSClient struct {
-	env  config.Environment
+	env  *config.Environment
 	sess *ses.SES
 }
 
-func NewAwsClient(env config.Environment) (*AWSClient, error) {
+func NewAwsClient(env *config.Environment) (*AWSClient, error) {
 
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-2")},
@@ -33,7 +33,10 @@ func NewAwsClient(env config.Environment) (*AWSClient, error) {
 
 }
 
-func (ac AWSClient) SendEmail(recipient string) error {
+func (ac AWSClient) SendEmail(recipient string, category string) error {
+
+	//Build html template
+	HtmlBody := ""
 
 	Sender := ac.env.SesSenderAddress
 
@@ -54,12 +57,12 @@ func (ac AWSClient) SendEmail(recipient string) error {
 			},
 			Subject: &ses.Content{
 				Charset: aws.String("UTF-8"),
-				Data:    aws.String(Subject),
+				Data:    aws.String(fmt.Sprintf("New user is enquiring about %s", category)),
 			},
 		},
 		Source: aws.String(Sender),
 	}
-	
+
 	_, err := ac.sess.SendEmail(input)
 	if err != nil {
 		return fmt.Errorf("problem sending email to %s: %w", recipient, err)
