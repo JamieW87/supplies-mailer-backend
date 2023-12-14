@@ -36,8 +36,15 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Getting supplier information")
+	//
+	//
 
 	uc.log.Info("Sending email to suppliers")
-	
+	err := uc.svc.SendSupplierEmail([]string, req.Category)
+	if err != nil {
+		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
+		return
+	}
+
 	c.IndentedJSON(http.StatusOK, &model.CreateUserEntryResponse{UserId: u.String()})
 }
