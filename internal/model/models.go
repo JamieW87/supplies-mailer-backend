@@ -41,3 +41,13 @@ type Category struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type Supplier struct {
+	bun.BaseModel `bun:"table:suppliers"`
+	Id            int `bun:",pk"`
+	Name          string
+	Email         string
+	Notes         string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}

@@ -36,11 +36,14 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Getting supplier information")
-	//
-	//
+	emails, err := uc.svc.RetrieveSupplierInfo(c, req.Category)
+	if err != nil {
+		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
+		return
+	}
 
 	uc.log.Info("Sending email to suppliers")
-	err := uc.svc.SendSupplierEmail([]string, req.Category)
+	err = uc.svc.SendSupplierEmail(emails, req.Category)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
