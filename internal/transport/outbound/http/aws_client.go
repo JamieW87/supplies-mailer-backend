@@ -1,7 +1,11 @@
 package http_out
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
+	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -36,7 +40,7 @@ func NewAwsClient(env *config.Environment) (*AWSClient, error) {
 func (ac AWSClient) SendEmail(recipient string, category string) error {
 
 	//Build html template
-	HtmlBody := ""
+	HtmlBody := getHTMLTemplate()
 
 	Sender := ac.env.SesSenderAddress
 
@@ -69,4 +73,30 @@ func (ac AWSClient) SendEmail(recipient string, category string) error {
 	}
 
 	return nil
+}
+
+func getHTMLTemplate() string {
+	var templateBuffer bytes.Buffer
+
+	type EmailData struct {
+		FirstName string
+		LastName  string
+	}
+
+	// You can bind custom data here as per requirements.
+	data := EmailData{
+		FirstName: "John",
+		LastName:  "Doe",
+	}
+	htmlData, err := os.ReadFile("supplier-template.html")
+	htmlTemplate := template.Must(template.New("email.html").Parse(string(htmlData)))
+
+	err = htmlTemplate.ExecuteTemplate(&templateBuffer, "email.html", data)
+
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+
+	return templateBuffer.String()
 }
