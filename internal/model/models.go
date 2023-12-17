@@ -51,3 +51,8 @@ type Supplier struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type SendSupplierInfo struct {
+	Name  string
+	Email string
+}

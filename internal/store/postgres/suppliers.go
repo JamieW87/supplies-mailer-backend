@@ -2,21 +2,21 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 
 	"one-stop/internal/model"
 )
 
-func (pg PostgresStore) GetSupplierEmailsForCategory(ctx context.Context, category string) ([]string, error) {
+func (pg PostgresStore) GetSupplierEmailsForCategory(ctx context.Context, category string) ([]model.SendSupplierInfo, error) {
 
-	var Supplier model.Supplier
+	var suppliers []model.SendSupplierInfo
+	err := pg.Db.NewSelect().
+		Column("s.name", "s.email").
+		TableExpr("suppliers AS s").
+		Join("JOIN supplier_categories AS sc ON s.id = sc.supplier_id").
+		Join("JOIN categories AS c ON sc.category_id = c.id").
+		Where("c.name = ?", category).
+		Scan(ctx, &suppliers)
 
-	var emails []string
-	err := pg.Db.NewSelect().Model(Supplier).Column("email").Where("category = ?", category).Scan(ctx, &emails)
-	if err != nil {
-		return nil, fmt.Errorf("error retrieving emails: %w", err)
-	}
-
-	return emails, nil
+	return suppliers, err
 
 }

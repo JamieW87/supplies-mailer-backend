@@ -1,11 +1,15 @@
 package service
 
-import "fmt"
+import (
+	"fmt"
 
-func (s *Service) SendSupplierEmail(suppliers []string, category string) error {
+	"one-stop/internal/model"
+)
+
+func (s *Service) SendSupplierEmail(suppliers []model.SendSupplierInfo, name, email, category string) error {
 
 	for i, _ := range suppliers {
-		err := s.awsClient.SendEmail(suppliers[i], category)
+		err := s.awsClient.SendEmail(suppliers[i].Email, suppliers[i].Name, name, email, category)
 		if err != nil {
 			return fmt.Errorf("error sending email: %w", err)
 		}

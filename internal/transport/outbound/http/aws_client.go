@@ -19,6 +19,13 @@ type AWSClient struct {
 	sess *ses.SES
 }
 
+type EmailData struct {
+	FirstName string
+	Category  string
+	UserName  string
+	UserEmail string
+}
+
 func NewAwsClient(env *config.Environment) (*AWSClient, error) {
 
 	sess, err := session.NewSession(&aws.Config{
@@ -37,10 +44,10 @@ func NewAwsClient(env *config.Environment) (*AWSClient, error) {
 
 }
 
-func (ac AWSClient) SendEmail(recipient string, category string) error {
+func (ac AWSClient) SendEmail(recipient, supplierName, name, email, category string) error {
 
 	//Build html template
-	HtmlBody := getHTMLTemplate()
+	HtmlBody := getHTMLTemplate(supplierName, name, category, email)
 
 	Sender := ac.env.SesSenderAddress
 
@@ -75,18 +82,14 @@ func (ac AWSClient) SendEmail(recipient string, category string) error {
 	return nil
 }
 
-func getHTMLTemplate() string {
+func getHTMLTemplate(firstName, userName, category, userEmail string) string {
 	var templateBuffer bytes.Buffer
 
-	type EmailData struct {
-		FirstName string
-		LastName  string
-	}
-
-	// You can bind custom data here as per requirements.
 	data := EmailData{
-		FirstName: "John",
-		LastName:  "Doe",
+		FirstName: firstName,
+		Category:  category,
+		UserName:  userName,
+		UserEmail: userEmail,
 	}
 	htmlData, err := os.ReadFile("supplier-template.html")
 	htmlTemplate := template.Must(template.New("email.html").Parse(string(htmlData)))
