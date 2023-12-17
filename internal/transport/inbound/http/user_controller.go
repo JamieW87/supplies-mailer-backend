@@ -1,6 +1,7 @@
 package http_in
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,11 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	err := c.BindJSON(&req)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
+		return
+	}
+
+	if !uc.svc.IsValidCategory(req.Category) {
+		errorhandling.HandleError(uc.log, c, http.StatusBadRequest, "Invalid category", errors.New("category does not exist"))
 		return
 	}
 

@@ -12,7 +12,7 @@ type Service struct {
 	awsClient *http_out.AWSClient
 }
 
-var ValidCategories = map[string]bool{
+var validCategory = map[string]bool{
 	"roofing":   true,
 	"brickwork": true,
 }
@@ -25,7 +25,7 @@ func NewService(env *config.Environment, db *postgres.PostgresStore, awsC *http_
 	}
 }
 
-func (s *Service) ValidateCategory(category string) bool {
-
-	return false
+func (s *Service) IsValidCategory(category string) bool {
+	_, valid := validCategory[category]
+	return valid
 }
