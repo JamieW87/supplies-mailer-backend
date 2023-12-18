@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /app
 
@@ -9,8 +9,14 @@ COPY . .
 
 RUN go build -o main ./cmd/server/
 
-EXPOSE 8080
 
-CMD [ "./main" ]
+FROM alpine
 
-# docker run --env-file=env.docker [image name]
+WORKDIR /app
+
+RUN apk add --no-cache jq
+
+COPY --from=builder /app/main main
+COPY ecs-entrypoint.sh .
+
+ENTRYPOINT ./ecs-entrypoint.sh
