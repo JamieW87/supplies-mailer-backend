@@ -32,7 +32,7 @@ deploy_api_lb = true
 
 api_service_count = 1
 
-api_service_version = "v0.1.0"
+api_service_version = "v0.1.1"
 
 api_memory = 1024
 
