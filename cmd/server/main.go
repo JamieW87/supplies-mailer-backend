@@ -32,6 +32,7 @@ func main() {
 		panic(err)
 	}
 
+	log.Info("Connecting to Postgres")
 	db := postgres.NewPostgresClient(env)
 
 	log.Info("Running migrations")
