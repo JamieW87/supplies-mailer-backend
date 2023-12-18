@@ -40,6 +40,31 @@ ecrBase="294786226104.dkr.ecr.eu-west-2.amazonaws.com"
 
 export AWS_PROFILE=ostop-prod
 
+# check env vars are set
+secret=$(aws secretsmanager get-secret-value --secret-id prod/environment --query SecretString --output text)
+isEnv=false
+cat internal/config/environment.go | while read i
+do
+  if [[ $i == "}" ]]; then
+    isEnv=false
+  fi
+  if [[ "$isEnv" == "true" ]]; then
+    envSplit=$(echo $i | sed -E 's/([a-zA-Z]+) .+/\1/' | sed 's/[A-Z]/ &/g')
+    envSplitUpper=$(echo "$envSplit" | tr '[:lower:]' '[:upper:]')
+    envVar=$(echo $envSplitUpper | sed 's/ /_/g')
+
+    val=$(echo $secret | jq -r .$envVar)
+    if [[ "null" == "$val" ]]; then
+      echo -e "${YELLOW}# ------------------------------------------------------ #${NC}"
+      echo -e "${YELLOW}# The $envVar env var is not yet set in secrets manager${NC}"
+      echo -e "${YELLOW}# ------------------------------------------------------ #${NC}"
+    fi
+  fi
+  if [[ $i == *"type Environment struct"* ]]; then
+    isEnv=true
+  fi
+done
+
 aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $ecrBase
 docker build --platform=linux/amd64 -t $ecrBase/onestop-backend:$1 .
 docker push $ecrBase/onestop-backend:$1
