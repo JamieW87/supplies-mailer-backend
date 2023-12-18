@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"os"
 
 	"github.com/mailersend/mailersend-go"
 
@@ -74,10 +73,28 @@ func getHTMLTemplate(firstName, userName, category, userEmail string) string {
 		UserName:  userName,
 		UserEmail: userEmail,
 	}
-	htmlData, err := os.ReadFile("supplier-template.html")
-	htmlTemplate := template.Must(template.New("email.html").Parse(string(htmlData)))
+	htmlData := `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<body>
+<p> Hello {{.FirstName}} </p>
+<p> The below user has enquired about {{.Category}} products </p>
+<p> Here are their details </p>
+<p> {{.UserName}}, {{.UserEmail}}</p>
+<p> Best Regards from, </p>
+<p> OneStop Building Supples </p>
 
-	err = htmlTemplate.ExecuteTemplate(&templateBuffer, "email.html", data)
+</body>
+</html>`
+
+	//, err := os.ReadFile("supplier-template.html")
+	htmlTemplate := template.Must(template.New("email.html").Parse(htmlData))
+
+	err := htmlTemplate.ExecuteTemplate(&templateBuffer, "email.html", data)
 
 	if err != nil {
 		log.Fatal(err)
