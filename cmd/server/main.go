@@ -47,13 +47,13 @@ func main() {
 	if mig != nil {
 		log.Info(fmt.Sprintf("Migration applied: %s", mig.String()))
 	}
-	awsClient, err := http_out.NewAwsClient(env)
+	msClient := http_out.NewMailerSendClient(env)
 	if err != nil {
 		log.Error("error creating aws client")
 		panic(err)
 	}
 
-	svc := service.NewService(env, db, awsClient)
+	svc := service.NewService(env, db, msClient)
 
 	log.Info("Running server")
 	r := gin.New()

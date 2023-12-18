@@ -49,7 +49,7 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Sending email to suppliers")
-	err = uc.svc.SendSupplierEmail(emails, req.Name, req.Email, req.Category)
+	err = uc.svc.SendSupplierEmail(c, emails, req.Name, req.Email, req.Category)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return

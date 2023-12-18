@@ -7,9 +7,9 @@ import (
 )
 
 type Service struct {
-	env       *config.Environment
-	db        *postgres.PostgresStore
-	awsClient *http_out.AWSClient
+	env      *config.Environment
+	db       *postgres.PostgresStore
+	msClient *http_out.MailerSendClient
 }
 
 var validCategory = map[string]bool{
@@ -17,11 +17,11 @@ var validCategory = map[string]bool{
 	"brickwork": true,
 }
 
-func NewService(env *config.Environment, db *postgres.PostgresStore, awsC *http_out.AWSClient) *Service {
+func NewService(env *config.Environment, db *postgres.PostgresStore, msc *http_out.MailerSendClient) *Service {
 	return &Service{
-		env:       env,
-		db:        db,
-		awsClient: awsC,
+		env:      env,
+		db:       db,
+		msClient: msc,
 	}
 }
 
