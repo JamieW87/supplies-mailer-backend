@@ -17,6 +17,7 @@ WORKDIR /app
 RUN apk add --no-cache jq
 
 COPY --from=builder /app/main main
+COPY --from=builder /app/supplier-template.html supplier-template.html
 COPY ecs-entrypoint.sh .
 
 ENTRYPOINT ./ecs-entrypoint.sh

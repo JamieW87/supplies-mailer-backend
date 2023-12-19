@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"log"
+	"os"
 
 	"github.com/mailersend/mailersend-go"
 
@@ -36,7 +36,10 @@ func NewMailerSendClient(env *config.Environment) *MailerSendClient {
 func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierName, name, email, category string) error {
 
 	subject := "One Stop - A new user is interested in your product"
-	html := getHTMLTemplate(supplierName, name, category, email)
+	html, err := getHTMLTemplate(supplierName, name, category, email)
+	if err != nil {
+		return fmt.Errorf("error getting template: %w", err)
+	}
 
 	from := mailersend.From{
 		Name:  "One Stop",
@@ -56,7 +59,7 @@ func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierNam
 	message.SetSubject(subject)
 	message.SetHTML(html)
 
-	_, err := mc.msc.Email.Send(ctx, message)
+	_, err = mc.msc.Email.Send(ctx, message)
 	if err != nil {
 		return fmt.Errorf("error sending email: %w", err)
 	}
@@ -64,7 +67,7 @@ func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierNam
 	return nil
 }
 
-func getHTMLTemplate(firstName, userName, category, userEmail string) string {
+func getHTMLTemplate(firstName, userName, category, userEmail string) (string, error) {
 	var templateBuffer bytes.Buffer
 
 	data := EmailData{
@@ -73,33 +76,17 @@ func getHTMLTemplate(firstName, userName, category, userEmail string) string {
 		UserName:  userName,
 		UserEmail: userEmail,
 	}
-	htmlData := `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-</head>
-<body>
-<p> Hello {{.FirstName}} </p>
-<p> The below user has enquired about {{.Category}} products </p>
-<p> Here are their details </p>
-<p> {{.UserName}}, {{.UserEmail}}</p>
-<p> Best Regards from, </p>
-<p> OneStop Building Supples </p>
 
-</body>
-</html>`
-
-	//, err := os.ReadFile("supplier-template.html")
-	htmlTemplate := template.Must(template.New("email.html").Parse(htmlData))
-
-	err := htmlTemplate.ExecuteTemplate(&templateBuffer, "email.html", data)
-
+	htmlData, err := os.ReadFile("supplier-template.html")
 	if err != nil {
-		log.Fatal(err)
-		return ""
+		return "", fmt.Errorf("error reading file: %w", err)
+	}
+	htmlTemplate := template.Must(template.New("email.html").Parse(string(htmlData)))
+
+	err = htmlTemplate.ExecuteTemplate(&templateBuffer, "email.html", data)
+	if err != nil {
+		return "", fmt.Errorf("error applying template: %w", err)
 	}
 
-	return templateBuffer.String()
+	return templateBuffer.String(), nil
 }
