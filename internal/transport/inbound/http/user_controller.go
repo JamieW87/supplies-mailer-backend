@@ -29,7 +29,7 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
 	}
-	
+
 	uc.log.Info(fmt.Sprintf("Received request for user %s for category %s", req.Name, req.Category))
 
 	if !uc.svc.IsValidCategory(req.Category) {
