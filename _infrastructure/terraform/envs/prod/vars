@@ -38,7 +38,7 @@ api_memory = 1024
 
 # --------- Database
 
-postgres_security_group_cidr_blocks = ["212.132.225.60/32"]
+postgres_security_group_cidr_blocks = ["212.132.225.60/32", "94.15.130.10/32"]
 
 provision_db = true
 
