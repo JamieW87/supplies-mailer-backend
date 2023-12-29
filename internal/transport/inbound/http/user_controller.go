@@ -38,7 +38,7 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Storing user data")
-	u, err := uc.svc.StoreUserData(c, req.Name, req.Email, req.Phone, req.Category)
+	u, err := uc.svc.StoreUserData(c, req.Name, req.Email, req.Phone, req.Category, req.Postcode)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return
@@ -52,7 +52,7 @@ func (uc userController) CreateUserEntry(c *gin.Context) {
 	}
 
 	uc.log.Info("Sending email to suppliers")
-	err = uc.svc.SendSupplierEmail(c, emails, req.Name, req.Email, req.Category)
+	err = uc.svc.SendSupplierEmail(c, emails, req.Name, req.Email, req.Category, req.Message)
 	if err != nil {
 		errorhandling.HandleError(uc.log, c, http.StatusInternalServerError, "Oops, something went wrong", err)
 		return

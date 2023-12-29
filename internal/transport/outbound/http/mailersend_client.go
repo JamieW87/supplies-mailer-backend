@@ -17,6 +17,7 @@ type EmailData struct {
 	Category  string
 	UserName  string
 	UserEmail string
+	UserMsg   string
 }
 
 type MailerSendClient struct {
@@ -33,10 +34,10 @@ func NewMailerSendClient(env *config.Environment) *MailerSendClient {
 	}
 }
 
-func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierName, name, email, category string) error {
+func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierName, name, email, category, msg string) error {
 
 	subject := "One Stop - A new user is interested in your product"
-	html, err := getHTMLTemplate(supplierName, name, category, email)
+	html, err := getHTMLTemplate(supplierName, name, category, email, msg)
 	if err != nil {
 		return fmt.Errorf("error getting template: %w", err)
 	}
@@ -67,7 +68,7 @@ func (mc MailerSendClient) SendEmail(ctx context.Context, recipient, supplierNam
 	return nil
 }
 
-func getHTMLTemplate(firstName, userName, category, userEmail string) (string, error) {
+func getHTMLTemplate(firstName, userName, category, userEmail, msg string) (string, error) {
 	var templateBuffer bytes.Buffer
 
 	data := EmailData{
@@ -75,6 +76,7 @@ func getHTMLTemplate(firstName, userName, category, userEmail string) (string, e
 		Category:  category,
 		UserName:  userName,
 		UserEmail: userEmail,
+		UserMsg:   msg,
 	}
 
 	htmlData, err := os.ReadFile("supplier-template.html")

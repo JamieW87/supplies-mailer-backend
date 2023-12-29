@@ -8,8 +8,15 @@
 <body>
 <p> Hello {{.FirstName}} </p>
 <p> The below user has enquired about {{.Category}} products </p>
-<p> Here are their details </p>
-<p> {{.UserName}}, {{.UserEmail}}</p>
+<p> Here are their details: </p>
+<p> {{.UserName}},
+    <br>
+    {{.UserEmail}}</p>
+<p>And here is the message they left: </p>
+<p>---</p>
+<p>{{.UserMsg}}</p>
+<p>---</p>
+<br>
 <p> Best Regards from, </p>
 <p> OneStop Building Supples </p>
 

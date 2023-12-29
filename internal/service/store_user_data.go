@@ -10,7 +10,7 @@ import (
 	"one-stop/internal/model"
 )
 
-func (s *Service) StoreUserData(ctx context.Context, name, email, phone, category string) (uuid.UUID, error) {
+func (s *Service) StoreUserData(ctx context.Context, name, email, phone, category, postcode string) (uuid.UUID, error) {
 
 	now := time.Now()
 
@@ -19,6 +19,7 @@ func (s *Service) StoreUserData(ctx context.Context, name, email, phone, categor
 		Name:      name,
 		Email:     email,
 		Phone:     phone,
+		Postcode:  postcode,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

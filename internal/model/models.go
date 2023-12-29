@@ -11,6 +11,8 @@ type CreateUserEntryRequest struct {
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Phone    string `json:"phone" binding:"required"`
+	Postcode string `json:"postcode"`
+	Message  string `json:"message"`
 	Category string `json:"category" binding:"required"`
 }
 
@@ -23,6 +25,7 @@ type User struct {
 	Name      string
 	Email     string
 	Phone     string
+	Postcode  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
